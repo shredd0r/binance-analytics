@@ -1,2 +1,6 @@
 .env
+config.yml
 bin/
+.idea/
+.vscode/
+db-orders.sqlite

@@ -1,0 +1,6 @@
+sqlite:
+  file-path: output/db-orders.sqlite
+
+credentials:
+  api-key: api-key
+  secret-key: secret-key

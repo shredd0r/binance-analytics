@@ -1,25 +1,39 @@
 package config
 
 import (
-	"github.com/caarlos0/env/v11"
-	"github.com/pkg/errors"
+	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type (
 	Config struct {
-		Credentials Credentials `envPrefix:"CREDENTIALS_"`
+		Credentials Credentials `yaml:"credentials"`
+	}
+
+	Sqlite struct {
+		FilePath string `yaml:"file-path"`
 	}
 
 	Credentials struct {
-		ApiKey    string `env:"API_KEY"`
-		SecretKey string `env:"SECRET_KEY"`
+		ApiKey    string `yaml:"api-key"`
+		SecretKey string `yaml:"secret-key"`
 	}
 )
 
 func Read() (*Config, error) {
-	var cfg *Config
-	if err := env.Parse(cfg); err != nil {
-		return nil, errors.Wrap(err, "error parsing config from env")
+	cfg := &Config{}
+	bytesConfig, err := os.ReadFile("config.yml")
+
+	if err != nil {
+		return nil, err
 	}
+
+	err = yaml.Unmarshal(bytesConfig, cfg)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return cfg, nil
 }

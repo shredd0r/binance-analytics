@@ -3,36 +3,55 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"os"
 
-	"github.com/caarlos0/env/v11"
-
-	binance_connector "github.com/binance/binance-connector-go"
-	"github.com/shredd0r/binance-reader/config"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/shredd0r/binance-analytics/config"
+	binance_connector "github.com/shredd0r/binance-connector-go"
 )
 
 func main() {
-	var cfg *config.Config
-	err := env.Parse(cfg)
+	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil))
+	// db, _ := sql.Open("sqlite3", sqlite.Path_to_file)
+	// db.Exec(sqlite.SchemaSQL)
 
-	// cfg, err := config.Read()
+	// dbConn, _ := db.Conn(context.Background())
 
-	if err != nil {
-		print(err)
-	}
+	// str := sqlite.NewC2COrderStorage(logger, dbConn)
+	// str.Save(context.Background(), entity.C2COrder{
+	// 	Id:          "123",
+	// 	OrderNumber: "123",
+	// 	TradeType:   "123",
+	// 	Fiat:        "123",
+	// 	Amount:      13.34,
+	// 	TotalPrice:  123.01,
+	// 	CreateTime:  1231412,
+	// })
 
-	GetAllOrders(cfg.Credentials.ApiKey, cfg.Credentials.SecretKey)
+	cfg, _ := config.Read()
+
+	GetAllOrders(logger, cfg.Credentials.ApiKey, cfg.Credentials.SecretKey)
 }
 
-func GetAllOrders(apiKey string, secretKey string) {
+func GetAllOrders(logger *slog.Logger, apiKey string, secretKey string) {
 	baseURL := "https://api.binance.com"
 
 	client := binance_connector.NewClient(apiKey, secretKey, baseURL)
 
-	resp, err := client.NewGetAllCoinsInfoService().Do(context.Background())
+	r, err := client.NewGetAccountService().Do(context.Background())
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(binance_connector.PrettyPrint(resp))
+
+	fmt.Println(binance_connector.PrettyPrint(r))
+
+	// resp, err := client.NewGetC2CTradeHistoryService().Timestamp(uint64(time.Now().UnixMilli())).Do(context.Background())
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// fmt.Println(binance_connector.PrettyPrint(resp))
 }
