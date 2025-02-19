@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/shredd0r/binance-analytics/config"
@@ -39,19 +40,19 @@ func GetAllOrders(logger *slog.Logger, apiKey string, secretKey string) {
 
 	client := binance_connector.NewClient(apiKey, secretKey, baseURL)
 
-	r, err := client.NewGetAccountService().Do(context.Background())
+	// r, err := client.NewGetAccountService().Do(context.Background())
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println(binance_connector.PrettyPrint(r))
-
-	// resp, err := client.NewGetC2CTradeHistoryService().Timestamp(uint64(time.Now().UnixMilli())).Do(context.Background())
 	// if err != nil {
 	// 	fmt.Println(err)
 	// 	return
 	// }
-	// fmt.Println(binance_connector.PrettyPrint(resp))
+
+	// fmt.Println(binance_connector.PrettyPrint(r))
+
+	resp, err := client.NewGetC2CTradeHistoryService().StartTimestamp(1731940691000).Timestamp(uint64(time.Now().UnixMilli())).Do(context.Background())
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(binance_connector.PrettyPrint(resp))
 }

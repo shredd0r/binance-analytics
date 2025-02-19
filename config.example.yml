@@ -1,6 +1,8 @@
+logger:
+  level: DEBUG
+  format: "123"
 sqlite:
   file-path: output/db-orders.sqlite
-
 credentials:
   api-key: api-key
   secret-key: secret-key

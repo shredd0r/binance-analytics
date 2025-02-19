@@ -3,4 +3,5 @@ config.yml
 bin/
 .idea/
 .vscode/
+cache.yml
 db-orders.sqlite

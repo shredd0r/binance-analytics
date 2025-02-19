@@ -1,14 +1,16 @@
 package config
 
 import (
-	"os"
+	"log/slog"
 
-	"gopkg.in/yaml.v3"
+	"github.com/shredd0r/binance-analytics/utils"
 )
 
 type (
 	Config struct {
+		Logger      Logger      `yaml:"logger"`
 		Credentials Credentials `yaml:"credentials"`
+		Storage     Sqlite      `yaml:"storage"`
 	}
 
 	Sqlite struct {
@@ -19,21 +21,19 @@ type (
 		ApiKey    string `yaml:"api-key"`
 		SecretKey string `yaml:"secret-key"`
 	}
+
+	Logger struct {
+		Format string     `yaml:"format"`
+		Level  slog.Level `yaml:"level"`
+	}
 )
+
+const pathToConfig = "config.yml"
 
 func Read() (*Config, error) {
 	cfg := &Config{}
-	bytesConfig, err := os.ReadFile("config.yml")
 
-	if err != nil {
-		return nil, err
-	}
-
-	err = yaml.Unmarshal(bytesConfig, cfg)
-
-	if err != nil {
-		return nil, err
-	}
+	utils.ReadYamlFile(pathToConfig, cfg)
 
 	return cfg, nil
 }
